@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<ClienteServicio>();
 builder.Services.AddSingleton<CuentaServicio>();
+builder.Services.AddSingleton<TransaccionServicio>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opciones =>
 {
@@ -118,6 +119,49 @@ cuentas.MapDelete("/{id:int}", (int id, CuentaServicio cuentaServicio) =>
 	.WithName("EliminarCuenta")
 	.Produces(StatusCodes.Status204NoContent)
 	.Produces(StatusCodes.Status404NotFound)
+	.WithOpenApi();
+
+var transacciones = app.MapGroup("/api/transacciones").WithTags("Transacciones");
+
+transacciones.MapGet("/", (TransaccionServicio transaccionServicio) => transaccionServicio.ObtenerTodos())
+	.WithName("ObtenerTransacciones")
+	.Produces<IReadOnlyList<Transaccion>>(StatusCodes.Status200OK)
+	.WithOpenApi();
+
+transacciones.MapGet("/{id:int}", (int id, TransaccionServicio transaccionServicio) =>
+	{
+		var transaccion = transaccionServicio.ObtenerPorId(id);
+		return transaccion is null ? Results.NotFound() : Results.Ok(transaccion);
+	})
+	.WithName("ObtenerTransaccionPorId")
+	.Produces<Transaccion>(StatusCodes.Status200OK)
+	.Produces(StatusCodes.Status404NotFound)
+	.WithOpenApi();
+
+transacciones.MapGet("/cuenta/{cuentaId:int}", (int cuentaId, TransaccionServicio transaccionServicio) =>
+	{
+		var resultados = transaccionServicio.ObtenerPorCuenta(cuentaId);
+		return Results.Ok(resultados);
+	})
+	.WithName("ObtenerTransaccionesPorCuenta")
+	.Produces<IReadOnlyList<Transaccion>>(StatusCodes.Status200OK)
+	.WithOpenApi();
+
+transacciones.MapPost("/", (TransaccionDto transaccionDto, TransaccionServicio transaccionServicio) =>
+	{
+		try
+		{
+			var transaccionCreada = transaccionServicio.Crear(transaccionDto);
+			return Results.Created($"/api/transacciones/{transaccionCreada.Id}", transaccionCreada);
+		}
+		catch (ArgumentException ex)
+		{
+			return Results.BadRequest(new { mensaje = ex.Message });
+		}
+	})
+	.WithName("CrearTransaccion")
+	.Produces<Transaccion>(StatusCodes.Status201Created)
+	.Produces(StatusCodes.Status400BadRequest)
 	.WithOpenApi();
 
 app.Run();

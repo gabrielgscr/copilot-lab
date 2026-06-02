@@ -249,3 +249,71 @@ Configura:
 > 💡 **Si la sugerencia no incluye algo que necesitas** (por ejemplo, falta la documentación Swagger o la ruta del frontend), prueba un prompt de seguimiento como: *"Agrega .WithOpenApi() y .Produces<>() a todos los endpoints para mejorar la documentación Swagger"* o *"Agrega UseStaticFiles y un redirect de / a /index.html"*. Iterar es parte natural de trabajar con Copilot.
 
 ---
+### Paso 1.8: Ejecutar y explorar Swagger
+
+🤖 **PROMPT en Modo Agent:**
+
+```
+Ejecuta la aplicación de Banco X
+```
+
+📝 **Alternativa manual:**
+```bash
+cd Banco X
+dotnet run
+```
+
+**Abre en el navegador:** `http://localhost:5088/swagger`
+
+> 📝 **Nota sobre el puerto:** Por defecto, `dotnet run` usa el puerto configurado en `Properties/launchSettings.json`. Si ves un puerto diferente (como 5176 o 5xxx), usa ese. Puedes forzar el puerto agregando `app.Urls.Add("http://localhost:5088");` en Program.cs o usando `dotnet run --urls "http://localhost:5000"`.
+
+✅ **Verificar:**
+- Swagger UI se muestra con el título "API de Banco X"
+- Los endpoints de clientes y cuentas aparecen organizados por tags
+- Puedes probar los endpoints directamente desde Swagger (botón "Try it out")
+- GET `/api/clientes` retorna los clientes de ejemplo
+
+> 🌟 ** ¡Con Swashbuckle y `.WithOpenApi()`, Swagger UI se genera **automáticamente** a partir de los tipos de tus endpoints! Prueba hacer un POST desde Swagger para crear un nuevo cliente.
+
+---
+
+### Paso 1.9: Agregar endpoint de transacciones (⭐ ejercicio para la clase)
+
+> 📝 **Este paso es un ejercicio.** Es un desafío para los asistentes del taller.
+
+Este paso es un **mini-desafío**. Usa lo que aprendiste para crear la funcionalidad de transacciones con la ayuda de Copilot.
+
+🤖 **PROMPT sugerido (adáptalo a tu estilo):**
+
+```
+Basándote en los patrones existentes del proyecto y la especificación en docs/spec.md, crea la funcionalidad de transacciones bancarias:
+
+1. Modelo en Models/Transaccion.cs con:
+   - Propiedades: Id, CuentaOrigenId, CuentaDestinoId (nullable), Tipo (string: "deposito"/"retiro"/"transferencia"), Monto (decimal), Fecha (DateTime), Descripcion (string)
+   - Un record TransaccionDto para crear (sin Id ni Fecha)
+   - Validación: el monto debe ser positivo
+
+2. Servicio en Services/TransaccionServicio.cs con datos de ejemplo
+
+3. Registra el servicio y agrega endpoints en Program.cs con un grupo /api/transacciones y tag "Transacciones"
+
+4. Incluye documentación OpenAPI con .WithOpenApi() en cada endpoint
+```
+
+> 💡 **Observa:** Copilot analiza los archivos existentes y genera código que **sigue los mismos patrones** que ya usaste en clientes y cuentas.
+
+---
+
+### 🛠️ Revisión del primer ejercicio
+
+| Problema | Solución |
+|----------|----------|
+| `dotnet: command not found` | Instala el .NET 10 SDK desde https://dot.net |
+| Error al compilar modelos | Verifica que los namespaces coincidan (`namespace BancoX.Models`) |
+| Swagger no aparece | Verifica que `app.UseSwagger()` y `app.UseSwaggerUI()` estén en Program.cs |
+| Puerto en uso | Cambia con `dotnet run --urls "http://localhost:5001"` |
+| Copilot genera Controllers en vez de Minimal APIs | Refuerza con "Usa Minimal APIs, NO Controllers. Sigue .github/copilot-instructions.md" |
+| Error de inyección de dependencias | Verifica que los servicios estén registrados como Singleton antes de `var app = builder.Build()` |
+
+---
+

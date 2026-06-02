@@ -1,0 +1,37 @@
+# Archivos de compilacion y salida
+bin/
+obj/
+
+# Configuracion de usuario y editor
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de pruebas y cobertura
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Paquetes y artefactos
+*.nupkg
+*.snupkg
+
+# Publicacion
+publish/
+
+# Logs
+*.log
+
+# Configuracion local sensible
+appsettings.Local.json
+appsettings.*.local.json
+
+# Rider / ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# VS Code
+.vscode/

@@ -4,6 +4,14 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(opciones =>
+{
+    opciones.AddDefaultPolicy(politica =>
+        politica.SetIsOriginAllowed(origen => new Uri(origen).Host == "localhost")
+                .AllowAnyHeader()
+                .AllowAnyMethod());
+});
+
 builder.Services.AddSingleton<ClienteServicio>();
 builder.Services.AddSingleton<CuentaServicio>();
 builder.Services.AddSingleton<TransaccionServicio>();
@@ -21,6 +29,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseCors();
 app.UseStaticFiles();
 
 app.MapGet("/", () => Results.Redirect("/index.html"))

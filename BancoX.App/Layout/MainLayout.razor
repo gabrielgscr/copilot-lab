@@ -1,0 +1,57 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavManager
+
+<div class="layout-banco">
+
+    <!-- Header -->
+    <header class="header-banco">
+        <div class="container-fluid d-flex align-items-center gap-3">
+            <span style="font-size: 2.2rem;">🏦</span>
+            <div>
+                <div class="banco-titulo">Banco X</div>
+                <div class="banco-subtitulo">Sistema de Gestión Bancaria</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra de navegación -->
+    <nav class="nav-banco">
+        <div class="container-fluid">
+            <ul class="nav">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <i class="bi bi-house-fill me-1"></i> Inicio
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="clientes">
+                        <i class="bi bi-people-fill me-1"></i> Clientes
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="cuentas">
+                        <i class="bi bi-credit-card-fill me-1"></i> Cuentas
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="transacciones">
+                        <i class="bi bi-arrow-left-right me-1"></i> Transacciones
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="contenido-principal container-fluid">
+        @Body
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-banco">
+        <i class="bi bi-bank me-2"></i>
+        &copy; @DateTime.Now.Year Banco X - Sistema de Gestión Bancaria
+    </footer>
+
+</div>
+

@@ -1,0 +1,145 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<PageTitle>Inicio - Banco X</PageTitle>
+
+<div class="row mb-4">
+    <div class="col">
+        <h4 class="fw-bold" style="color: var(--banco-primario);">
+            <i class="bi bi-speedometer2 me-2"></i>Panel de Control
+        </h4>
+        <p class="text-muted">Resumen general del sistema bancario</p>
+    </div>
+</div>
+
+@if (mensajeError is not null)
+{
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <div>@mensajeError</div>
+    </div>
+}
+
+@if (cargando)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando estadísticas...</span>
+        </div>
+        <span class="ms-3 text-muted">Cargando estadísticas...</span>
+    </div>
+}
+else
+{
+    <div class="row g-4 mb-5">
+        <!-- Card: Total Clientes -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card card-estadistica h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4"
+                     style="background: linear-gradient(135deg, #1a237e, #3949ab);">
+                    <div class="card-icono text-white">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="text-white">
+                        <div class="fs-1 fw-bold lh-1">@totalClientes</div>
+                        <div class="opacity-75 mt-1">Total Clientes</div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 py-2">
+                    <a href="clientes" class="text-decoration-none small" style="color: var(--banco-primario);">
+                        Ver clientes <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Total Cuentas -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card card-estadistica h-100">
+                <div class="card-body d-flex align-items-center gap-3 p-4"
+                     style="background: linear-gradient(135deg, #1b5e20, #388e3c);">
+                    <div class="card-icono text-white">
+                        <i class="bi bi-credit-card-fill"></i>
+                    </div>
+                    <div class="text-white">
+                        <div class="fs-1 fw-bold lh-1">@totalCuentas</div>
+                        <div class="opacity-75 mt-1">Total Cuentas</div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 py-2">
+                    <a href="cuentas" class="text-decoration-none small" style="color: #1b5e20;">
+                        Ver cuentas <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header" style="background-color: var(--banco-claro);">
+                    <h6 class="mb-0 fw-semibold" style="color: var(--banco-primario);">
+                        <i class="bi bi-info-circle me-2"></i>Acerca del Sistema
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2 text-muted">
+                        <strong>Banco X</strong> es un sistema bancario que permite gestionar clientes,
+                        cuentas bancarias y transacciones financieras de manera eficiente y segura.
+                    </p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="clientes" class="btn btn-sm btn-banco-primario">
+                            <i class="bi bi-people me-1"></i> Gestionar Clientes
+                        </a>
+                        <a href="cuentas" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-credit-card me-1"></i> Ver Cuentas
+                        </a>
+                        <a href="transacciones" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-arrow-left-right me-1"></i> Ver Transacciones
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private int totalClientes;
+    private int totalCuentas;
+    private bool cargando = true;
+    private string? mensajeError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarEstadisticas();
+    }
+
+    private async Task CargarEstadisticas()
+    {
+        cargando = true;
+        mensajeError = null;
+
+        try
+        {
+            var clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/clientes");
+            totalClientes = clientes?.Count ?? 0;
+
+            var cuentas = await Http.GetFromJsonAsync<List<Cuenta>>("api/cuentas");
+            totalCuentas = cuentas?.Count ?? 0;
+        }
+        catch (HttpRequestException)
+        {
+            mensajeError = "No se pudo conectar con la API de Banco X. Verifique que el servidor esté en ejecución en http://localhost:5088.";
+        }
+        catch (Exception)
+        {
+            mensajeError = "Ocurrió un error inesperado al cargar las estadísticas. Intente de nuevo más tarde.";
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}

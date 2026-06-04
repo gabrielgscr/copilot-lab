@@ -1,0 +1,40 @@
+# Archivos de compilacion y salida
+bin/
+obj/
+
+# Configuracion de usuario y editor
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de pruebas y cobertura
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Paquetes y artefactos
+*.nupkg
+*.snupkg
+
+# Publicacion
+publish/
+
+# Logs
+*.log
+
+# Configuracion local sensible
+appsettings.Local.json
+appsettings.*.local.json
+
+# Blazor WebAssembly: archivos generados en tiempo de compilacion
+wwwroot/_framework/
+wwwroot/BancoX.App.styles.css
+
+# Bootstrap y librerias locales (se usan via CDN)
+wwwroot/lib/
+
+# Archivos de importmap generados
+wwwroot/*.importmap

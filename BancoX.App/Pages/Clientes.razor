@@ -1,0 +1,365 @@
+@page "/clientes"
+@inject HttpClient Http
+
+<PageTitle>Clientes - Banco X</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-0" style="color: var(--banco-primario);">
+            <i class="bi bi-people-fill me-2"></i>Gestión de Clientes
+        </h4>
+        <p class="text-muted small mb-0">Administre los clientes registrados en el sistema</p>
+    </div>
+    <button class="btn btn-banco-primario" @onclick="AbrirModalNuevoCliente">
+        <i class="bi bi-person-plus-fill me-2"></i>Nuevo Cliente
+    </button>
+</div>
+
+@if (mensajeError is not null)
+{
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <div>@mensajeError</div>
+        <button type="button" class="btn-close ms-auto" @onclick="() => mensajeError = null"></button>
+    </div>
+}
+
+@if (mensajeExito is not null)
+{
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <div>@mensajeExito</div>
+        <button type="button" class="btn-close ms-auto" @onclick="() => mensajeExito = null"></button>
+    </div>
+}
+
+@if (cargando)
+{
+    <div class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando clientes...</span>
+        </div>
+        <span class="ms-3 text-muted">Cargando clientes...</span>
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            @if (clientes is null || clientes.Count == 0)
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-people" style="font-size: 3rem;"></i>
+                    <p class="mt-3">No hay clientes registrados.</p>
+                    <button class="btn btn-banco-primario" @onclick="AbrirModalNuevoCliente">
+                        Registrar primer cliente
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 tabla-banco">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                <th>Correo Electrónico</th>
+                                <th>Teléfono</th>
+                                <th>Dirección</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var cliente in clientes)
+                            {
+                                <tr>
+                                    <td class="align-middle text-muted small">@cliente.Id</td>
+                                    <td class="align-middle fw-semibold">@cliente.Nombre</td>
+                                    <td class="align-middle">@cliente.Email</td>
+                                    <td class="align-middle">@cliente.Telefono</td>
+                                    <td class="align-middle text-muted small">@cliente.Direccion</td>
+                                    <td class="align-middle text-center">
+                                        <button class="btn btn-sm btn-outline-primary me-1"
+                                                title="Editar cliente"
+                                                @onclick="() => AbrirModalEditar(cliente)">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                title="Eliminar cliente"
+                                                @onclick="() => ConfirmarEliminar(cliente)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="px-3 py-2 text-muted small border-top">
+                    Total: <strong>@clientes.Count</strong> cliente(s)
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- Modal: Nuevo / Editar Cliente -->
+@if (mostrarModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--banco-primario);">
+                    <h5 class="modal-title text-white">
+                        <i class="bi bi-person-fill me-2"></i>
+                        @(clienteEditando.Id == 0 ? "Nuevo Cliente" : "Editar Cliente")
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (mensajeErrorModal is not null)
+                    {
+                        <div class="alert alert-danger small py-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>@mensajeErrorModal
+                        </div>
+                    }
+                    <EditForm Model="clienteEditando" OnValidSubmit="GuardarCliente">
+                        <DataAnnotationsValidator />
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nombre Completo <span class="text-danger">*</span></label>
+                            <InputText class="form-control" @bind-Value="clienteEditando.Nombre"
+                                       placeholder="Ej: Juan García López" />
+                            <ValidationMessage For="@(() => clienteEditando.Nombre)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Correo Electrónico <span class="text-danger">*</span></label>
+                            <InputText class="form-control" @bind-Value="clienteEditando.Email"
+                                       placeholder="Ej: juan@ejemplo.com" type="email" />
+                            <ValidationMessage For="@(() => clienteEditando.Email)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Teléfono <span class="text-danger">*</span></label>
+                            <InputText class="form-control" @bind-Value="clienteEditando.Telefono"
+                                       placeholder="Ej: 555-1234567" />
+                            <ValidationMessage For="@(() => clienteEditando.Telefono)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Dirección <span class="text-danger">*</span></label>
+                            <InputText class="form-control" @bind-Value="clienteEditando.Direccion"
+                                       placeholder="Ej: Av. Reforma 123, Ciudad de México" />
+                            <ValidationMessage For="@(() => clienteEditando.Direccion)" />
+                        </div>
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-secondary" @onclick="CerrarModal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-banco-primario" disabled="@guardando">
+                                @if (guardando)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                }
+                                <i class="bi bi-check-lg me-1"></i>
+                                @(clienteEditando.Id == 0 ? "Crear Cliente" : "Guardar Cambios")
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal: Confirmar eliminación -->
+@if (clienteAEliminar is not null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación
+                    </h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p>¿Está seguro de eliminar al cliente</p>
+                    <p class="fw-bold">@clienteAEliminar.Nombre?</p>
+                    <p class="text-muted small">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="() => clienteAEliminar = null">
+                        Cancelar
+                    </button>
+                    <button class="btn btn-danger" @onclick="EliminarCliente" disabled="@eliminando">
+                        @if (eliminando)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        <i class="bi bi-trash me-1"></i>Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Cliente>? clientes;
+    private bool cargando = true;
+    private bool mostrarModal = false;
+    private bool guardando = false;
+    private bool eliminando = false;
+    private string? mensajeError;
+    private string? mensajeExito;
+    private string? mensajeErrorModal;
+    private Cliente clienteEditando = new();
+    private Cliente? clienteAEliminar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarClientes();
+    }
+
+    private async Task CargarClientes()
+    {
+        cargando = true;
+        mensajeError = null;
+        try
+        {
+            clientes = await Http.GetFromJsonAsync<List<Cliente>>("api/clientes");
+        }
+        catch (HttpRequestException)
+        {
+            mensajeError = "No se pudo conectar con la API. Verifique que el servidor esté en ejecución.";
+        }
+        catch (Exception)
+        {
+            mensajeError = "Error inesperado al cargar los clientes. Intente de nuevo.";
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private void AbrirModalNuevoCliente()
+    {
+        clienteEditando = new Cliente();
+        mensajeErrorModal = null;
+        mostrarModal = true;
+    }
+
+    private void AbrirModalEditar(Cliente cliente)
+    {
+        clienteEditando = new Cliente
+        {
+            Id = cliente.Id,
+            Nombre = cliente.Nombre,
+            Email = cliente.Email,
+            Telefono = cliente.Telefono,
+            Direccion = cliente.Direccion
+        };
+        mensajeErrorModal = null;
+        mostrarModal = true;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+        mensajeErrorModal = null;
+    }
+
+    private async Task GuardarCliente()
+    {
+        guardando = true;
+        mensajeErrorModal = null;
+
+        var dto = new ClienteDto
+        {
+            Nombre = clienteEditando.Nombre,
+            Email = clienteEditando.Email,
+            Telefono = clienteEditando.Telefono,
+            Direccion = clienteEditando.Direccion
+        };
+
+        try
+        {
+            HttpResponseMessage respuesta;
+            if (clienteEditando.Id == 0)
+            {
+                respuesta = await Http.PostAsJsonAsync("api/clientes", dto);
+                if (respuesta.IsSuccessStatusCode)
+                    mensajeExito = $"Cliente '{clienteEditando.Nombre}' creado correctamente.";
+            }
+            else
+            {
+                respuesta = await Http.PutAsJsonAsync($"api/clientes/{clienteEditando.Id}", dto);
+                if (respuesta.IsSuccessStatusCode)
+                    mensajeExito = $"Cliente '{clienteEditando.Nombre}' actualizado correctamente.";
+            }
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+                CerrarModal();
+                await CargarClientes();
+            }
+            else if (respuesta.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                mensajeErrorModal = "Ya existe un cliente con ese correo electrónico.";
+            }
+            else
+            {
+                mensajeErrorModal = "No se pudo guardar el cliente. Verifique los datos e intente de nuevo.";
+            }
+        }
+        catch (Exception)
+        {
+            mensajeErrorModal = "Error de conexión. Verifique que el servidor esté en ejecución.";
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+
+    private void ConfirmarEliminar(Cliente cliente)
+    {
+        clienteAEliminar = cliente;
+    }
+
+    private async Task EliminarCliente()
+    {
+        if (clienteAEliminar is null) return;
+        eliminando = true;
+
+        try
+        {
+            var respuesta = await Http.DeleteAsync($"api/clientes/{clienteAEliminar.Id}");
+            if (respuesta.IsSuccessStatusCode)
+            {
+                mensajeExito = $"Cliente '{clienteAEliminar.Nombre}' eliminado correctamente.";
+                clienteAEliminar = null;
+                await CargarClientes();
+            }
+            else if (respuesta.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                mensajeError = "No es posible eliminar el cliente porque tiene cuentas asociadas.";
+                clienteAEliminar = null;
+            }
+            else
+            {
+                mensajeError = "No se pudo eliminar el cliente. Intente de nuevo.";
+                clienteAEliminar = null;
+            }
+        }
+        catch (Exception)
+        {
+            mensajeError = "Error de conexión al intentar eliminar el cliente.";
+            clienteAEliminar = null;
+        }
+        finally
+        {
+            eliminando = false;
+        }
+    }
+}

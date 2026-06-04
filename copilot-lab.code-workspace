@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "BancoX.Api"
+		},
+		{
+			"path": "BancoX.App"
 		}
 	],
 	"settings": {}

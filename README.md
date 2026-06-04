@@ -28,3 +28,17 @@ Aprender a usar distintas capacidades de Copilot durante el ciclo de desarrollo:
 ## Resultado esperado
 
 Al finalizar tendrás una mini aplicación funcional y una guía práctica de cómo aprovechar Copilot en tareas reales de desarrollo.
+
+## Estado actual del laboratorio
+
+- API implementada con Minimal APIs en `BancoX.Api/BancoX/Program.cs`.
+- Frontend implementado con Blazor WebAssembly en `BancoX.App`.
+- Módulos funcionales principales: clientes, cuentas y transacciones.
+- Persistencia en memoria (sin base de datos externa), orientada a aprendizaje y práctica.
+
+## Estructura principal
+
+- `BancoX.Api`: solución de backend, endpoints y servicios en memoria.
+- `BancoX.App`: aplicación cliente Blazor WebAssembly que consume la API.
+- `BancoX.Api/docs/spec.md`: especificación funcional y técnica del dominio.
+- `Parte 1 API` y `Parte 2 GUI`: guías del laboratorio por etapas.

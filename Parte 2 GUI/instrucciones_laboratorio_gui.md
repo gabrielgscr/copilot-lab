@@ -2,11 +2,11 @@
 
 > ⚠️ **PRERREQUISITO:** Este ejercicio requiere que la API del Ejercicio 1 esté funcionando.
 
-> 📝 **ENFOQUE SIMPLE:** El frontend es **una sola página HTML** (`wwwroot/index.html`) servida como archivo estático por .NET. Usa Bootstrap 5 vía CDN y JavaScript vanilla con `fetch()` para llamar a la API. **No se usa React, npm ni ningún framework frontend** — todo está en un solo archivo HTML.
+> 📝 **ENFOQUE DEL LABORATORIO:** El frontend se implementa como una aplicación **Blazor WebAssembly** (proyecto `BancoX.App`) que consume la API `BancoX.Api` vía `HttpClient`. Se usa Bootstrap 5 vía CDN para estilos, sin npm.
 
 ### Objetivos
 
-- ✅ Crear una página HTML servida como archivo estático que consuma la API
+- ✅ Crear una aplicación Blazor WebAssembly que consuma la API
 - ✅ Crear un agente personalizado de Copilot para desarrollo web
 - ✅ Usar el agente con una imagen de referencia para mejorar el frontend
 - ✅ Integrar Bootstrap 5 vía CDN para una interfaz visual atractiva

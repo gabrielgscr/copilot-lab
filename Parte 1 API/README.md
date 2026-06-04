@@ -2,7 +2,7 @@
 
 ![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-Enabled-green)
 ![.NET](https://img.shields.io/badge/.NET-10.0%20LTS-purple)
-![Minimal APIs](https://img.shields.io/badge/Minimal%20APIs-8.x-blue)
+![Minimal APIs](https://img.shields.io/badge/Minimal%20APIs-.NET%2010-blue)
 
 ## 🛠️ Pre-requisitos
 

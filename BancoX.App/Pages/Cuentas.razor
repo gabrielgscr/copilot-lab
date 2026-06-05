@@ -1,18 +1,28 @@
 @page "/cuentas"
+@using System.ComponentModel.DataAnnotations
+@using System.Globalization
 @inject HttpClient Http
 
 <PageTitle>Cuentas - Banco X</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <div>
         <h4 class="fw-bold mb-0" style="color: var(--banco-primario);">
-            <i class="bi bi-credit-card-fill me-2"></i>Cuentas Bancarias
+            <i class="bi bi-credit-card-fill me-2"></i>Gestión de Cuentas
         </h4>
-        <p class="text-muted small mb-0">Consulta de cuentas registradas en el sistema</p>
+        <p class="text-muted small mb-0">Administre las cuentas bancarias registradas en el sistema</p>
     </div>
-    <button class="btn btn-outline-secondary" @onclick="CargarCuentas" title="Actualizar lista">
-        <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
-    </button>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span class="badge text-bg-light border text-secondary px-3 py-2">
+            <i class="bi bi-collection me-1"></i>Total: @(cuentas?.Count ?? 0)
+        </span>
+        <button class="btn btn-outline-secondary" @onclick="CargarDatosPantalla" title="Actualizar lista">
+            <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+        </button>
+        <button class="btn btn-banco-primario" @onclick="AbrirModalNuevaCuenta">
+            <i class="bi bi-plus-circle-fill me-2"></i>Nueva Cuenta
+        </button>
+    </div>
 </div>
 
 @if (mensajeError is not null)
@@ -21,6 +31,15 @@
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
         <div>@mensajeError</div>
         <button type="button" class="btn-close ms-auto" @onclick="() => mensajeError = null"></button>
+    </div>
+}
+
+@if (mensajeExito is not null)
+{
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <div>@mensajeExito</div>
+        <button type="button" class="btn-close ms-auto" @onclick="() => mensajeExito = null"></button>
     </div>
 }
 
@@ -35,13 +54,16 @@
 }
 else
 {
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm card-tabla-clientes">
         <div class="card-body p-0">
             @if (cuentas is null || cuentas.Count == 0)
             {
                 <div class="text-center py-5 text-muted">
                     <i class="bi bi-credit-card" style="font-size: 3rem;"></i>
                     <p class="mt-3">No hay cuentas registradas en el sistema.</p>
+                    <button class="btn btn-banco-primario" @onclick="AbrirModalNuevaCuenta">
+                        Registrar primera cuenta
+                    </button>
                 </div>
             }
             else
@@ -50,46 +72,45 @@ else
                     <table class="table table-hover mb-0 tabla-banco">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Número de Cuenta</th>
-                                <th>ID Cliente</th>
-                                <th>Tipo</th>
-                                <th class="text-end">Saldo</th>
-                                <th>Estado</th>
-                                <th>Fecha Apertura</th>
+                                <th><i class="bi bi-hash me-1"></i>#</th>
+                                <th><i class="bi bi-credit-card-2-front me-1"></i>Número</th>
+                                <th><i class="bi bi-wallet2 me-1"></i>Tipo</th>
+                                <th class="text-end"><i class="bi bi-cash-stack me-1"></i>Saldo</th>
+                                <th><i class="bi bi-shield-check me-1"></i>Estado</th>
+                                <th><i class="bi bi-person-badge me-1"></i>Cliente Asociado</th>
+                                <th><i class="bi bi-calendar-event me-1"></i>Apertura</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var cuenta in cuentas)
                             {
+                                var (claseEstado, iconoEstado) = ObtenerEstiloEstado(cuenta.Estado);
                                 <tr>
                                     <td class="align-middle text-muted small">@cuenta.Id</td>
                                     <td class="align-middle fw-semibold font-monospace">@cuenta.NumeroCuenta</td>
-                                    <td class="align-middle text-muted small">@cuenta.ClienteId</td>
-                                    <td class="align-middle">
+                                    <td class="align-middle text-capitalize">
                                         <span class="badge" style="background-color: var(--banco-acento);">
                                             @cuenta.TipoCuenta
                                         </span>
                                     </td>
-                                    <td class="align-middle text-end fw-semibold">
-                                        @cuenta.Saldo.ToString("C2", new System.Globalization.CultureInfo("es-MX"))
-                                    </td>
+                                    <td class="align-middle text-end fw-semibold">@FormatearMoneda(cuenta.Saldo)</td>
                                     <td class="align-middle">
-                                        @{
-                                            var (badgeClass, icono) = cuenta.Estado?.ToLower() switch
-                                            {
-                                                "activa" => ("bg-success", "bi-check-circle-fill"),
-                                                "bloqueada" => ("bg-warning text-dark", "bi-lock-fill"),
-                                                "cerrada" => ("bg-secondary", "bi-x-circle-fill"),
-                                                _ => ("bg-secondary", "bi-question-circle")
-                                            };
-                                        }
-                                        <span class="badge @badgeClass">
-                                            <i class="bi @icono me-1"></i>@cuenta.Estado
+                                        <span class="badge @claseEstado">
+                                            <i class="bi @iconoEstado me-1"></i>@cuenta.Estado
                                         </span>
                                     </td>
-                                    <td class="align-middle text-muted small">
-                                        @cuenta.FechaApertura.ToString("dd/MM/yyyy")
+                                    <td class="align-middle">
+                                        <div class="fw-semibold">@ObtenerNombreCliente(cuenta.ClienteId)</div>
+                                        <div class="text-muted small">ID: @cuenta.ClienteId</div>
+                                    </td>
+                                    <td class="align-middle text-muted small">@cuenta.FechaApertura.ToString("dd/MM/yyyy")</td>
+                                    <td class="align-middle text-center">
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                title="Eliminar cuenta"
+                                                @onclick="() => ConfirmarEliminar(cuenta)">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             }
@@ -104,27 +125,145 @@ else
     </div>
 }
 
+<!-- Modal: Nueva Cuenta -->
+@if (mostrarModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: var(--banco-primario);">
+                    <h5 class="modal-title text-white">
+                        <i class="bi bi-credit-card-2-front-fill me-2"></i>Nueva Cuenta
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (mensajeErrorModal is not null)
+                    {
+                        <div class="alert alert-danger small py-2">
+                            <i class="bi bi-exclamation-circle me-1"></i>@mensajeErrorModal
+                        </div>
+                    }
+
+                    <EditForm Model="nuevaCuenta" OnValidSubmit="CrearCuenta">
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Cliente <span class="text-danger">*</span></label>
+                            <InputSelect class="form-select" @bind-Value="nuevaCuenta.ClienteId">
+                                <option value="0">Seleccione un cliente</option>
+                                @foreach (var cliente in clientes)
+                                {
+                                    <option value="@cliente.Id">@cliente.Nombre (@cliente.Email)</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => nuevaCuenta.ClienteId)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tipo de Cuenta <span class="text-danger">*</span></label>
+                            <InputSelect class="form-select" @bind-Value="nuevaCuenta.TipoCuenta">
+                                <option value="ahorro">Ahorro</option>
+                                <option value="corriente">Corriente</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => nuevaCuenta.TipoCuenta)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Saldo Inicial <span class="text-danger">*</span></label>
+                            <InputNumber class="form-control" @bind-Value="nuevaCuenta.SaldoInicial" step="0.01" min="0" />
+                            <ValidationMessage For="@(() => nuevaCuenta.SaldoInicial)" />
+                        </div>
+
+                        <div class="alert alert-light border small mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            El número de cuenta y estado inicial se generan automáticamente al crear la cuenta.
+                        </div>
+
+                        <div class="modal-footer px-0 pb-0 mt-3">
+                            <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cancelar</button>
+                            <button type="submit" class="btn btn-banco-primario" disabled="@guardando">
+                                @if (guardando)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                }
+                                <i class="bi bi-check-lg me-1"></i>Crear Cuenta
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal: Confirmar eliminación -->
+@if (cuentaAEliminar is not null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar Eliminación
+                    </h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p>¿Está seguro de eliminar la cuenta</p>
+                    <p class="fw-bold font-monospace">@cuentaAEliminar.NumeroCuenta?</p>
+                    <p class="text-muted small">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="() => cuentaAEliminar = null">Cancelar</button>
+                    <button class="btn btn-danger" @onclick="EliminarCuenta" disabled="@eliminando">
+                        @if (eliminando)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        <i class="bi bi-trash me-1"></i>Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<Cuenta>? cuentas;
+    private List<Cliente> clientes = [];
     private bool cargando = true;
+    private bool mostrarModal;
+    private bool guardando;
+    private bool eliminando;
     private string? mensajeError;
+    private string? mensajeExito;
+    private string? mensajeErrorModal;
+    private NuevaCuentaFormulario nuevaCuenta = new();
+    private Cuenta? cuentaAEliminar;
 
     protected override async Task OnInitializedAsync()
     {
-        await CargarCuentas();
+        await CargarDatosPantalla();
     }
 
-    private async Task CargarCuentas()
+    private async Task CargarDatosPantalla()
     {
         cargando = true;
         mensajeError = null;
+
         try
         {
-            cuentas = await Http.GetFromJsonAsync<List<Cuenta>>("api/cuentas");
+            var tareaClientes = Http.GetFromJsonAsync<List<Cliente>>("api/clientes");
+            var tareaCuentas = Http.GetFromJsonAsync<List<Cuenta>>("api/cuentas");
+
+            await Task.WhenAll(tareaClientes, tareaCuentas);
+
+            clientes = tareaClientes.Result ?? [];
+            cuentas = tareaCuentas.Result ?? [];
         }
         catch (HttpRequestException)
         {
-            mensajeError = "No se pudo conectar con la API. Verifique que el servidor esté en ejecución en http://localhost:5088.";
+            mensajeError = "No se pudo conectar con la API. Verifique que el servidor esté en ejecución.";
         }
         catch (Exception)
         {
@@ -134,5 +273,146 @@ else
         {
             cargando = false;
         }
+    }
+
+    private void AbrirModalNuevaCuenta()
+    {
+        if (clientes.Count == 0)
+        {
+            mensajeError = "Debe existir al menos un cliente para crear una cuenta.";
+            return;
+        }
+
+        nuevaCuenta = new NuevaCuentaFormulario();
+        mensajeErrorModal = null;
+        mostrarModal = true;
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+        mensajeErrorModal = null;
+    }
+
+    private async Task CrearCuenta()
+    {
+        guardando = true;
+        mensajeErrorModal = null;
+
+        var dto = new CuentaDto
+        {
+            ClienteId = nuevaCuenta.ClienteId,
+            NumeroCuenta = GenerarNumeroCuenta(),
+            TipoCuenta = nuevaCuenta.TipoCuenta,
+            Saldo = nuevaCuenta.SaldoInicial,
+            Estado = "activa"
+        };
+
+        try
+        {
+            var respuesta = await Http.PostAsJsonAsync("api/cuentas", dto);
+            if (respuesta.IsSuccessStatusCode)
+            {
+                mensajeExito = "Cuenta creada correctamente.";
+                CerrarModal();
+                await CargarDatosPantalla();
+            }
+            else
+            {
+                mensajeErrorModal = "No se pudo crear la cuenta. Verifique los datos e intente de nuevo.";
+            }
+        }
+        catch (HttpRequestException)
+        {
+            mensajeErrorModal = "Error de conexión. Verifique que la API esté disponible.";
+        }
+        catch (Exception)
+        {
+            mensajeErrorModal = "Error inesperado al crear la cuenta.";
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+
+    private void ConfirmarEliminar(Cuenta cuenta)
+    {
+        cuentaAEliminar = cuenta;
+    }
+
+    private async Task EliminarCuenta()
+    {
+        if (cuentaAEliminar is null)
+        {
+            return;
+        }
+
+        eliminando = true;
+        try
+        {
+            var respuesta = await Http.DeleteAsync($"api/cuentas/{cuentaAEliminar.Id}");
+            if (respuesta.IsSuccessStatusCode)
+            {
+                mensajeExito = $"Cuenta {cuentaAEliminar.NumeroCuenta} eliminada correctamente.";
+                cuentaAEliminar = null;
+                await CargarDatosPantalla();
+            }
+            else
+            {
+                mensajeError = "No se pudo eliminar la cuenta. Intente de nuevo.";
+                cuentaAEliminar = null;
+            }
+        }
+        catch (Exception)
+        {
+            mensajeError = "Error de conexión al intentar eliminar la cuenta.";
+            cuentaAEliminar = null;
+        }
+        finally
+        {
+            eliminando = false;
+        }
+    }
+
+    private string ObtenerNombreCliente(int clienteId)
+    {
+        var cliente = clientes.FirstOrDefault(c => c.Id == clienteId);
+        return cliente?.Nombre ?? "Cliente no encontrado";
+    }
+
+    private static string FormatearMoneda(decimal saldo)
+    {
+        return saldo.ToString("C2", CultureInfo.GetCultureInfo("es-MX"));
+    }
+
+    private static (string clase, string icono) ObtenerEstiloEstado(string? estado)
+    {
+        return estado?.ToLowerInvariant() switch
+        {
+            "activa" => ("text-bg-success", "bi-check-circle-fill"),
+            "inactiva" => ("text-bg-warning", "bi-pause-circle-fill"),
+            "bloqueada" => ("text-bg-danger", "bi-lock-fill"),
+            _ => ("text-bg-secondary", "bi-question-circle")
+        };
+    }
+
+    private static string GenerarNumeroCuenta()
+    {
+        var marcaTiempo = DateTime.UtcNow.ToString("yyMMddHHmmss");
+        var sufijoAleatorio = Random.Shared.Next(10, 99);
+        return $"{marcaTiempo}{sufijoAleatorio}";
+    }
+
+    private sealed class NuevaCuentaFormulario
+    {
+        [Range(1, int.MaxValue, ErrorMessage = "Seleccione un cliente.")]
+        public int ClienteId { get; set; }
+
+        [Required(ErrorMessage = "Seleccione un tipo de cuenta.")]
+        public string TipoCuenta { get; set; } = "ahorro";
+
+        [Range(typeof(decimal), "0", "999999999999", ErrorMessage = "El saldo inicial debe ser mayor o igual a cero.")]
+        public decimal SaldoInicial { get; set; }
     }
 }

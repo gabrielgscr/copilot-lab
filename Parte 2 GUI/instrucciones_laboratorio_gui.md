@@ -115,3 +115,47 @@ Usa el mismo patrón que ya existe en la sección de Clientes.
 > 💡 **Observa:** Al mencionar "el patrón que ya existe", Copilot genera código **consistente** con lo que ya escribiste, todo dentro del mismo archivo HTML.
 
 ---
+
+### Paso 2.5: Ejecutar y probar la integración
+
+🤖 **PROMPT en Modo Agent:**
+
+```
+Ejecuta la aplicación de Banco X
+```
+
+📝 **Alternativa manual:**
+```bash
+cd BancoX
+dotnet run
+```
+
+**Abre en el navegador:**
+- Frontend (Blazor Web Assembly): `http://localhost:52XX/`
+- Swagger UI (documentación API): `http://localhost:50XX/swagger`
+
+✅ **Verificar:**
+- La página HTML de Banco X carga correctamente
+- Las estadísticas se muestran con datos reales de la API
+- La tabla de clientes muestra los datos de ejemplo
+- Se puede crear un nuevo cliente desde el formulario modal
+- La sección de cuentas funciona con los datos de la API
+- Swagger UI sigue accesible en `/swagger`
+
+---
+### Paso 2.6: Usar /explain para entender código (demostración)
+
+> 💡 **CONCEPTO:** El comando `/explain` es perfecto para entender código que Copilot generó.
+
+📍 **Instrucciones:**
+1. Selecciona algún bloque Razor que invoque al API (por ejemplo, la carga de cuentas desde la API).
+2. Abre Copilot Chat y escribe:
+
+```
+/explain ¿Qué hace este código paso a paso? ¿Hay algún problema potencial?
+```
+
+📝 **Observa:** Copilot explica el flujo del código y puede señalar posibles mejoras como manejo de errores, timeouts o validaciones faltantes.
+
+---
+

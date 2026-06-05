@@ -157,3 +157,33 @@ Piensa en las **instrucciones** como las reglas del equipo que todos siguen, los
 | `/fix` | Propone corrección de errores | Selecciona código con error → `/fix` |
 | `/explain` | Explica código seleccionado | Selecciona código → `/explain` |
 
+
+
+## 📚 Recursos Adicionales
+
+### Documentación Oficial
+
+- [GitHub Copilot Docs](https://docs.github.com/en/copilot)
+- [VS Code + Copilot](https://code.visualstudio.com/docs/copilot/overview)
+- [Custom Agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents)
+- [Prompt Files](https://docs.github.com/en/copilot/tutorials/customization-library/prompt-files)
+- [.NET 10 Documentation](https://learn.microsoft.com/dotnet/)
+- [Minimal APIs Overview](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
+- [Swashbuckle Documentation](https://learn.microsoft.com/aspnet/core/tutorials/web-api-help-pages-using-swagger)
+- [xUnit Documentation](https://xunit.net/docs/getting-started/netcore/cmdline)
+- [Bootstrap 5](https://getbootstrap.com/docs/5.3/)
+
+### Patrones y Buenas Prácticas
+
+- [C# Coding Conventions](https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions)
+- [Minimal API Best Practices](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/min-api-filter)
+- [Testing ASP.NET Core Apps](https://learn.microsoft.com/aspnet/core/test/integration-tests)
+- [Awesome GitHub Copilot](https://github.com/github/awesome-copilot) — Agentes, instrucciones y skills de la comunidad
+
+### Siguiente Nivel con Copilot
+
+- **Copilot en la terminal:** Usa `Ctrl+I` en la terminal integrada de VS Code para generar comandos `dotnet`
+- **Más agentes personalizados:** Crea agentes para testing, seguridad, documentación o DevOps en `.github/agents/`
+- **Prompt files reutilizables:** Define tareas comunes como `/deploy`, `/review`, `/changelog` en `.github/prompts/`
+- **Skills con scripts:** Combina instrucciones con scripts y assets en `.github/skills/` para tareas complejas
+- **Copilot para Git:** Usa Copilot Chat para generar mensajes de commit descriptivos

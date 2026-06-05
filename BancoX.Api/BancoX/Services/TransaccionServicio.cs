@@ -168,6 +168,25 @@ public class TransaccionServicio
         return transaccion;
     }
 
+    /// <summary>
+    /// Obtiene la cuenta destino para una operacion de deposito.
+    /// Si la transaccion no especifica <c>CuentaDestinoId</c>, se utiliza la cuenta origen.
+    /// </summary>
+    /// <param name="transaccionDto">Datos de la transaccion que contienen el identificador opcional de cuenta destino.</param>
+    /// <param name="cuentaOrigen">Cuenta origen de la transaccion, utilizada como destino por defecto en depositos sin cuenta destino explicita.</param>
+    /// <returns>
+    /// La cuenta destino valida para aplicar el deposito.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Se produce cuando la transaccion especifica una cuenta destino y esta no existe en el sistema.
+    /// </exception>
+    /// <example>
+    /// <code>
+    /// var dto = new TransaccionDto(1, null, "deposito", 250m, "Deposito en ventanilla");
+    /// var destino = ObtenerCuentaDestinoParaDeposito(dto, cuentaOrigen);
+    /// // destino sera cuentaOrigen al no indicar CuentaDestinoId.
+    /// </code>
+    /// </example>
     private Cuenta ObtenerCuentaDestinoParaDeposito(TransaccionDto transaccionDto, Cuenta cuentaOrigen)
     {
         if (transaccionDto.CuentaDestinoId is null)

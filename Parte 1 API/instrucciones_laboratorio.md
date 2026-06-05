@@ -215,7 +215,7 @@ Sigue el mismo patrón y estilo que Cliente.cs y ClienteServicio.cs
 - ¿Incluyó la validación de saldo negativo que pediste?
 - ¿Usó `decimal` para los montos en lugar de `double`?
 
-> 🌟 **Momento wow:** Al mencionar "sigue el mismo patrón que ClienteServicio.cs", Copilot analiza el archivo existente y replica su estructura. ¡Cada persona puede obtener un resultado ligeramente diferente!
+> 🌟 Al mencionar "sigue el mismo patrón que ClienteServicio.cs", Copilot analiza el archivo existente y replica su estructura. ¡Cada persona puede obtener un resultado ligeramente diferente!
 
 ---
 

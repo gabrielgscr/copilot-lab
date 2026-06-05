@@ -82,7 +82,7 @@ Analiza el diseño y mejora la visualización gráfica de las pantallas creadas:
 4. Mejora la navegación y la jerarquía visual general
 5. Asegúrate de que el diseño sea responsive
 
-Mantén toda la funcionalidad JavaScript existente (fetch, modales, CRUD).
+Mantén toda la funcionalidad  existente.
 No cambies las rutas de la API ni la lógica de negocio.
 ```
 
@@ -92,3 +92,26 @@ No cambies las rutas de la API ni la lógica de negocio.
 
 ---
 
+### Paso 2.4: Agregar las funcionalidades de cuentas al sistema
+
+🤖 **PROMPT en Modo Agent:**
+
+```
+Actualiza la aplicación web para agregar las funcionalidades pendientes de cuentas bancarias.
+
+Haz lo siguiente para la pantalla de cuentas bancarias:
+1. Realiza mejoras visuales aplicadas en Clientes. Asegúrate que la tabla muestre: número, tipo, saldo, estado, cliente asociado
+2. Los saldos deben mostrarse en formato de moneda ($ con separadores de miles)
+3. Botón "Nueva Cuenta" con modal que incluya:
+   - Selector de cliente (dropdown cargado desde la API)
+   - Tipo de cuenta (ahorro/corriente)
+   - Saldo inicial
+4. Badge de color para el estado: activa (verde), inactiva (amarillo), bloqueada (rojo)
+5. Funcionalidad de eliminar cuenta con confirmación
+
+Usa el mismo patrón que ya existe en la sección de Clientes.
+```
+
+> 💡 **Observa:** Al mencionar "el patrón que ya existe", Copilot genera código **consistente** con lo que ya escribiste, todo dentro del mismo archivo HTML.
+
+---

@@ -5,40 +5,52 @@
 
     <!-- Header -->
     <header class="header-banco">
-        <div class="container-fluid d-flex align-items-center gap-3">
-            <span style="font-size: 2.2rem;">🏦</span>
-            <div>
-                <div class="banco-titulo">Banco X</div>
-                <div class="banco-subtitulo">Sistema de Gestión Bancaria</div>
+        <div class="container-fluid d-flex align-items-center justify-content-between gap-3 flex-wrap">
+            <div class="d-flex align-items-center gap-3">
+                <div class="logo-banco">
+                    <i class="bi bi-bank2"></i>
+                </div>
+                <div>
+                    <div class="banco-titulo">Banco X</div>
+                    <div class="banco-subtitulo">Sistema de Gestión Bancaria</div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2 text-white-50 small">
+                <span class="badge rounded-pill text-bg-light text-dark px-3 py-2">
+                    <i class="bi bi-shield-check me-1"></i>Operación segura
+                </span>
             </div>
         </div>
     </header>
 
     <!-- Barra de navegación -->
     <nav class="nav-banco">
-        <div class="container-fluid">
-            <ul class="nav">
+        <div class="container-fluid d-flex justify-content-between align-items-center gap-3 flex-wrap">
+            <ul class="nav nav-banco-lista flex-nowrap">
                 <li class="nav-item">
                     <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <i class="bi bi-house-fill me-1"></i> Inicio
+                        <i class="bi bi-house-fill me-2"></i>Inicio
                     </NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="clientes">
-                        <i class="bi bi-people-fill me-1"></i> Clientes
+                        <i class="bi bi-people-fill me-2"></i>Clientes
                     </NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="cuentas">
-                        <i class="bi bi-credit-card-fill me-1"></i> Cuentas
+                        <i class="bi bi-credit-card-fill me-2"></i>Cuentas
                     </NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="transacciones">
-                        <i class="bi bi-arrow-left-right me-1"></i> Transacciones
+                        <i class="bi bi-arrow-left-right me-2"></i>Transacciones
                     </NavLink>
                 </li>
             </ul>
+            <span class="estado-ruta small">
+                <i class="bi bi-compass me-1"></i>@NavManager.Uri.Replace(NavManager.BaseUri, "/")
+            </span>
         </div>
     </nav>
 

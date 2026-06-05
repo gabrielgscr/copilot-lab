@@ -41,3 +41,54 @@ Incluye manejo de errores con mensajes amigables al usuario.
 
 ---
 
+### Paso 2.2: Crear un agente personalizado para desarrollo web 🤖
+
+> 💡 **¿Qué es un agente personalizado?** Como vimos en los Conceptos Clave, un agente es una versión especializada de Copilot definida en un archivo Markdown con frontmatter YAML. Se crea mediante la instrucción /create-agent que define su rol, expertise y reglas. Una vez creado, puedes seleccionarlo en Copilot Chat para que todas sus respuestas sigan ese perfil especializado.
+
+🤖 **PROMPT en Modo Agent:**
+
+```
+Es un especialista senior en frontend web con experiencia en interfaces para banca y finanzas. Domina HTML5 semántico, Bootstrap 5 vía CDN, JavaScript, Blazor Web Assembly, y diseño responsive mobile-first.
+
+Todo lo que genere debe estar en español: código, comentarios y textos visibles en la interfaz. El look and feel debe ser profesional y bancario — azul oscuro, blanco y gris claro como paleta base. La usabilidad y la claridad siempre van por encima de la complejidad visual. Los montos deben mostrarse como moneda con separadores de miles, y la interfaz debe incluir estados de carga y mensajes de error que un usuario no técnico pueda entender.
+
+Debe respetar la arquitectura del sistema que contiene Front-End en Blazor WebAssembly y un API la cual debe invocar para las operaciones.
+
+Cuando reciba una imagen de referencia, debe analizar el layout, los colores, la tipografía y la distribución de elementos para extraer los mejores patrones y adaptarlos al stack del proyecto, sin copiar el diseño tal cual y manteniendo la identidad visual de Banco X.
+```
+
+📝 **Observa:** El agente queda registrado en el repositorio. Cualquier miembro del equipo que clone el repo tendrá acceso a este agente especializado desde Copilot Chat.
+---
+
+### Paso 2.3: Mejorar el frontend usando el agente con un screenshot 📸
+
+> 💡 **CONCEPTO:** Ahora vamos a usar el agente que acabamos de crear para mejorar la página del Paso 2.1. El flujo es: tomas un screenshot de una interfaz que te guste como referencia, se lo pasas al agente, y le pides que adapte tu frontend con esa inspiración.
+
+📍 **Instrucciones:**
+1. Busca un screenshot de un dashboard bancario que te guste como referencia (puedes buscar "banking dashboard UI" en Google Imágenes y tomar un screenshot, o usar uno que el instructor proporcione)
+2. En Copilot Chat, selecciona el agente de frontend recientemente creado
+3. Arrastra o pega la imagen de referencia en el chat y escribe el siguiente prompt:
+
+🤖 **PROMPT usando el nuevo agente:**
+
+```
+Aquí te comparto una imagen de referencia de un dashboard bancario.
+
+Analiza el diseño y mejora la visualización gráfica de las pantallas creadas:
+
+1. Mejora el layout de las tarjetas de estadísticas en la sección de Inicio
+2. Mejora el diseño de la tabla de clientes (bordes, spacing, hover effects)
+3. Agrega íconos visuales (puedes usar Bootstrap Icons vía CDN)
+4. Mejora la navegación y la jerarquía visual general
+5. Asegúrate de que el diseño sea responsive
+
+Mantén toda la funcionalidad JavaScript existente (fetch, modales, CRUD).
+No cambies las rutas de la API ni la lógica de negocio.
+```
+
+> 🌟 El agente interpreta la imagen de referencia y adapta el frontend manteniendo la funcionalidad existente. Esto demuestra cómo los agentes personalizados combinan expertise especializada con contexto visual para producir resultados más precisos que un prompt genérico.
+
+> 📝 **Si no tienes una imagen de referencia**, puedes omitir la imagen y pedirle al agente: *"Mejora el diseño con tu criterio de experto en UX bancaria. Hazlo más profesional y moderno manteniendo toda la funcionalidad existente."*
+
+---
+

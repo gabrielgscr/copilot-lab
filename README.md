@@ -32,10 +32,6 @@ Aprender a usar capacidades de Copilot durante el ciclo de desarrollo:
 - El proyecto API expone internals a tests con `InternalsVisibleTo` en `BancoX.Api/BancoX/BancoX.csproj`.
 - Se agregaron comentarios XML de documentacion en metodos del dominio (ejemplo: `TransaccionServicio`).
 
-## Resultado de pruebas mas reciente
-
-- Ejecucion completa de `dotnet test` en `BancoX.Api/BancoX.Tests`.
-- Resultado: 19 pruebas totales, 19 correctas, 0 errores.
 
 ## Estructura principal
 
